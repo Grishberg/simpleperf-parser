@@ -1,0 +1,424 @@
+/*
+ * Copyright (C) 2019 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+package profiler.perfetto.proto;
+option java_package = "com.android.tools.profiler.perfetto.proto";
+option java_outer_classname = "TraceProcessor";
+
+import "trace_processor_memory_data.proto";
+
+service TraceProcessorService {
+  // Request to load a trace into the daemon.
+  rpc LoadTrace(LoadTraceRequest) returns (LoadTraceResponse) {}
+
+  // Send one or more batched queries to the service.
+  rpc QueryBatch(QueryBatchRequest) returns (QueryBatchResponse) {}
+}
+
+message LoadTraceRequest {
+  // Unique Identifier for the trace being loaded.
+  int64 trace_id = 1;
+
+  // Absolute file path for the .trace file to be loaded and parsed.
+  string trace_path = 2;
+
+  // Optional paths to symbol root. If this is provided the trace is
+  // symbolized on load.
+  repeated string symbol_path = 3;
+
+  // Optional path for the trace processor to save the symbolized
+  // data as a proto file. This file can be appended to the
+  // original capture to created a symbolized capture file.
+  string symbolized_output_path = 4;
+}
+
+message LoadTraceResponse {
+  // If the trace was successfully loaded.
+  bool ok = 1;
+
+  // In case the trace was not loaded correctly, this field contains
+  // a string explaining the reason.
+  string error = 2;
+}
+
+message QueryBatchRequest {
+  // Each query request can batch multiple queries in order to avoid excesive
+  // RPC overhead.
+  repeated QueryParameters query = 1;
+}
+
+message QueryBatchResponse {
+  // There will be one result for each QueryRequest.query received on the
+  // QueryRequest msg.
+  repeated QueryResult result = 1;
+}
+
+message QueryParameters {
+  // Fields 1 to 100 reserved to future metadata passed on the request.
+
+  // Trace Identifier that represents which trace this query should be run
+  // against. When this field is 0, then execute against the last loaded trace
+  // for compatibility, might be required in the future.
+  int64 trace_id = 1;
+
+  oneof query {
+    ProcessMetadataParameters process_metadata_request = 101;
+    TraceEventsParameters trace_events_request = 102;
+    SchedulingEventsParameters sched_request = 103;
+    AllocationDataRequest memory_request = 104;
+    ProcessCountersParameters process_counters_request = 105;
+    CpuCoreCountersParameters cpu_core_counters_request = 106;
+    AndroidFrameEventsParameters android_frame_events_request = 107;
+    TraceMetadataParameters trace_metadata_request = 108;
+    AndroidFrameTimelineParameters android_frame_timeline_request = 109;
+  }
+
+  // Returns metadata information for a process of the provided id.
+  // If process_id is not set (or is set to 0), returns metadata
+  // for all processes found in the trace.
+  // See ResultProcessMetadata for the data returned from this.
+  message ProcessMetadataParameters {
+    int64 process_id = 1;
+  }
+
+  // Returns metadata information for a given metadata name, and/or type of
+  // of metadata. If there is more than one match, all matching results will
+  // be returned. If no name or type is provided all rows will be returned.
+  // https://perfetto.dev/docs/analysis/sql-tables#metadata
+  message TraceMetadataParameters {
+    string type = 1;
+    string name = 2;
+  }
+
+  // Returns all the trace events for all threads part of the process_id
+  // identified by process_id or for a single thread identified by thread_id.
+  // See TraceEventsResult for the data returned from this.
+  message TraceEventsParameters {
+    oneof criteria {
+      int64 process_id = 1;
+      int64 thread_id = 2;
+    }
+  }
+
+  // Returns all CPU scheduling events for all threads part of the process
+  // identified by process_id or for a single thread identified by thread_id.
+  // If no criteria is set, return all the scheduling data contained in the
+  // trace. See SchedulingEventsResults for the data returned from this.
+  message SchedulingEventsParameters {
+    oneof criteria {
+      int64 process_id = 1;
+      int64 thread_id = 2;
+    }
+  }
+
+  // Returns all process counters for the process identified by process_id.
+  // See https://perfetto.dev/docs/analysis/sql-tables#process_counter_track.
+  message ProcessCountersParameters {
+    int64 process_id = 1;
+  }
+
+  // Returns data from all CPU cores, e.g. frequency counters.
+  // See https://perfetto.dev/docs/analysis/sql-tables#cpu_counter_track.
+  message CpuCoreCountersParameters {}
+
+  // Returns data from the Perfetto data source: android.surfaceflinger.frame.
+  // See https://perfetto.dev/docs/analysis/sql-tables#frame_slice.
+  // Only available from Android R.
+  message AndroidFrameEventsParameters {
+    // String hint to filter frame_slices by layer name. For apps, use the
+    // process name. If empty, the response will not return any events.
+    string layer_name_hint = 1;
+  }
+
+  // Returns data from the Perfetto data source:
+  // android.surfaceflinger.frametimeline. See
+  // https://perfetto.dev/docs/analysis/sql-tables#expected_frame_timeline_slice
+  // and
+  // https://perfetto.dev/docs/analysis/sql-tables#actual_frame_timeline_slice
+  // Only available from Android S.
+  message AndroidFrameTimelineParameters {
+    int64 process_id = 1;
+  }
+}
+
+message QueryResult {
+  // Fields 1 to 100 reserved to metadata returned by the query.
+
+  // If all queries were executed succefully.
+  // If this is false, the main reason for the failure and error
+  // messages can be found in the failure_reason and error fields.
+  bool ok = 1;
+
+  // If ok = false, this field contains the main reason on why the
+  // query failed.
+  QueryFailureReason failure_reason = 2;
+
+  // In case any query had an issue, this field might contains
+  // a string with more details on the reason of the failure.
+  string error = 3;
+
+  // Can be set to none if the received query was invalid. In this case,
+  // check the error field.
+  oneof result {
+    ProcessMetadataResult process_metadata_result = 101;
+    TraceEventsResult trace_events_result = 102;
+    SchedulingEventsResult sched_result = 103;
+    NativeAllocationContext memory_events = 104;
+    ProcessCountersResult process_counters_result = 105;
+    CpuCoreCountersResult cpu_core_counters_result = 106;
+    AndroidFrameEventsResult android_frame_events_result = 107;
+    TraceMetadataResult trace_metadata_result = 108;
+    AndroidFrameTimelineResult android_frame_timeline_result = 109;
+  }
+
+  enum QueryFailureReason {
+    // Proto good practices.
+    NONE = 0;
+    // Other/general failures. See the error message.
+    OTHER = 1;
+    // If this instance of TPD doesn't know about the trace specified.
+    TRACE_NOT_FOUND = 2;
+  }
+}
+
+message ProcessMetadataResult {
+  // List of processes contained in the processed trace, with associated
+  // threads.
+  repeated ProcessMetadata process = 1;
+
+  // Threads that we don't know to which process they belong to.
+  repeated ThreadMetadata dangling_thread = 2;
+
+  message ProcessMetadata {
+    int64 id = 1;
+    int64 internal_id = 2;
+    string name = 3;
+
+    repeated ThreadMetadata thread = 4;
+  }
+
+  message ThreadMetadata {
+    int64 id = 1;
+    int64 internal_id = 2;
+    string name = 3;
+  }
+}
+
+// Result of each row returned from the metadata table.
+message TraceMetadataResult {
+  repeated TraceMetadataRow metadata_row = 1;
+}
+
+// Metadata table represented as a proto
+// Each field here is a column in the metadata table, the
+// values are expected to be either int64 or string never
+// both.
+message TraceMetadataRow {
+  // Name of metadata key
+  string name = 1;
+  // How many expected values are associated with this key,
+  // typically this is "single" can be "multi"
+  // See:
+  // https://github.com/google/perfetto/blob/31f297b260df8ab33e372fc81d612fecb4bcf9e7/src/trace_processor/storage/metadata.h
+  string key_type = 2;
+  oneof value {
+    int64 int64_value = 3;
+    string string_value = 4;
+  }
+}
+
+message TraceEventsResult {
+  repeated ThreadTraceEvents thread = 1;
+
+  message ThreadTraceEvents {
+    int64 thread_id = 1;
+
+    // Trace Events keyed by their id, useful to reconstruct the event tree.
+    // See TraceEvent.parent_id.
+    repeated TraceEvent trace_event = 2;
+  }
+
+  message TraceEvent {
+    // Id of this particular event.
+    int64 id = 1;
+
+    int64 timestamp_nanoseconds = 2;
+    int64 duration_nanoseconds = 3;
+    string name = 4;
+
+    // The parent event of this. Will be 0 if depth = 0.
+    int64 parent_id = 5;
+
+    // The depth of this event on its event tree.
+    int32 depth = 6;
+  }
+}
+
+message SchedulingEventsResult {
+  // List of scheduling events, ordered by thread_id and increasing timestamp.
+  repeated SchedulingEvent sched_event = 1;
+
+  // How many cores the device has as seen by Perfetto.
+  int32 num_cores = 2;
+
+  message SchedulingEvent {
+    int64 process_id = 1;
+    int64 thread_id = 2;
+    // In which cpu core the event happened.
+    // Will be in [0, num_cores - 1].
+    int32 cpu = 3;
+
+    // The timestamp in nanoseconds of when the thread began running.
+    int64 timestamp_nanoseconds = 4;
+    // For how long the thread ran.
+    int64 duration_nanoseconds = 5;
+    // The end state of the thread (why it stopped).
+    SchedulingState end_state = 6;
+    int32 priority = 7;
+
+    // The RUNNING state is implied as the start state so it's not encoded here.
+    // See
+    // https://perfetto.dev/docs/data-sources/cpu-scheduling#decoding-code-end_state-code-
+    enum SchedulingState {
+      UNKNOWN = 0;
+      RUNNABLE = 1;
+      RUNNABLE_PREEMPTED = 2;
+      SLEEPING = 3;
+      SLEEPING_UNINTERRUPTIBLE = 4;
+      DEAD = 5;
+      WAKE_KILL = 6;
+      WAKING = 7;
+    }
+  }
+}
+
+message ProcessCountersResult {
+  // The id of the process from which these counters belongs to.
+  int64 process_id = 1;
+
+  // List of counters.
+  repeated Counter counter = 2;
+}
+
+message CpuCoreCountersResult {
+  // How many cores the device has as seen by Perfetto.
+  int32 num_cores = 1;
+
+  // List of counters by CPU core ID.
+  repeated CountersPerCore counters_per_core = 2;
+
+  message CountersPerCore {
+    // Which cpu core the counter is associated with.
+    // Will be in [0, num_cores - 1].
+    int32 cpu = 1;
+
+    // List of counters.
+    repeated Counter counter = 2;
+  }
+}
+
+message Counter {
+  // The counter name.
+  string name = 1;
+
+  // All entries of this counter, with associated timestamps.
+  repeated CounterValue value = 2;
+}
+
+message CounterValue {
+  int64 timestamp_nanoseconds = 1;
+  double value = 2;
+}
+
+message AndroidFrameEventsResult {
+  // List of Android Layers, the unit of composition in SurfaceFlinger.
+  repeated Layer layer = 1;
+
+  message Layer {
+    // Full layer name, e.g. com.example.app/MainActivity#0.
+    string layer_name = 2;
+    // List of phases in the graphics pipeline, e.g. application, wait for GPU.
+    repeated Phase phase = 1;
+  }
+
+  message Phase {
+    // Frame lifecycle phase name, e.g. APP, SF.
+    string phase_name = 3;
+    // List of events in the frame lifecycle.
+    repeated FrameEvent frame_event = 1;
+  }
+
+  message FrameEvent {
+    // Unique event ID, using frame_slice.id.
+    int64 id = 1;
+    // Event timestamp in nanoseconds.
+    int64 timestamp_nanoseconds = 2;
+    // Event duration in nanoseconds.
+    int64 duration_nanoseconds = 3;
+    // A number to associate events of various phases to the same frame.
+    int32 frame_number = 4;
+    // Depth of the event along the vertical axis, useful for laying out async
+    // slices.
+    int32 depth = 5;
+  }
+}
+
+message AndroidFrameTimelineResult {
+  // Represents the time given to the app for rendering the frame.
+  repeated ExpectedSlice expected_slice = 1;
+  // Represents the actual time an app took to complete the frame.
+  repeated ActualSlice actual_slice = 2;
+
+  message ExpectedSlice {
+    // Expected start time of the frame.
+    int64 timestamp_nanoseconds = 1;
+    // Expected duration of the frame.
+    int64 duration_nanoseconds = 2;
+    // Token number of the DisplayFrame: a single frame-on-screen.
+    int64 display_frame_token = 3;
+    // Token number of the SurfaceFrame: a frame from a Surface.
+    int64 surface_frame_token = 4;
+    // Name of the layer (Surface) to which the frame was presented.
+    string layer_name = 5;
+  }
+
+  message ActualSlice {
+    // Actual start time of the frame.
+    int64 timestamp_nanoseconds = 1;
+    // Actual duration of the frame.
+    int64 duration_nanoseconds = 2;
+    // Token number of the DisplayFrame: a single frame-on-screen.
+    int64 display_frame_token = 3;
+    // Token number of the SurfaceFrame: a frame from a Surface.
+    int64 surface_frame_token = 4;
+    // Name of the layer (Surface) to which the frame was presented.
+    string layer_name = 5;
+    // One of "Early Present", "On-time Present", "Late Present".
+    string present_type = 6;
+    // Name of the jank type, e.g. "App Deadline Missed".
+    // Comma-delimited if multiple jank types are present, e.g. "Buffer
+    // Stuffing, SurfaceFlinger Stuffing".
+    // "None" if no jank was observed with this frame.
+    string jank_type = 7;
+    // Whether the application finished its work for the frame on time.
+    bool on_time_finish = 8;
+    // Whether the frame was composited by the GPU or not.
+    bool gpu_composition = 9;
+    // Depth of the slice along the vertical axis for UI layout.
+    int32 layout_depth = 10;
+  }
+}

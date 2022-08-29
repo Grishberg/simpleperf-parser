@@ -1,0 +1,223 @@
+/*
+ * Copyright (C) 2016 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+package profiler.proto;
+option java_package = "com.android.tools.profiler.proto";
+option java_outer_classname = "CpuProfiler";
+
+import "common.proto";
+import "cpu_data.proto";
+
+service CpuService {
+  rpc GetData(CpuDataRequest) returns (CpuDataResponse) {
+  }
+
+  rpc GetThreads(GetThreadsRequest) returns (GetThreadsResponse) {
+  }
+
+  rpc GetTraceInfo(GetTraceInfoRequest) returns (GetTraceInfoResponse) {
+  }
+
+  // Starts collecting execution metrics of a running app, such as usage info
+  // and thread states. Does nothing if the app is already being monitored.
+  rpc StartMonitoringApp(CpuStartRequest) returns (CpuStartResponse) {
+  }
+
+  // Stops monitoring a running app. Does nothing if the app is not being
+  // monitored, or is not running.
+  rpc StopMonitoringApp(CpuStopRequest) returns (CpuStopResponse) {
+  }
+
+  // Starts recording app stacktraces of a running app.
+  // Does nothing if the app is already being profiled with Simpleperf.
+  // Returns an error if the app is already being profiled with ART.
+  rpc StartProfilingApp(CpuProfilingAppStartRequest)
+      returns (CpuProfilingAppStartResponse) {
+  }
+
+  // Stops recording app stacktraces of a running app. Does nothing if the app
+  // is not being
+  // profiled, or is not running.
+  rpc StopProfilingApp(CpuProfilingAppStopRequest)
+      returns (CpuProfilingAppStopResponse) {
+  }
+
+  rpc StartStartupProfiling(StartupProfilingRequest)
+      returns (StartupProfilingResponse) {
+  }
+
+  rpc GetCpuCoreConfig(CpuCoreConfigRequest) returns (CpuCoreConfigResponse) {
+  }
+}
+
+// Requests all the traces that overlap with a time range.
+message GetTraceInfoRequest {
+  Session session = 1;
+  int64 from_timestamp = 2;  // inclusive
+  int64 to_timestamp = 3;    // inclusive
+}
+
+message GetTraceInfoResponse {
+  repeated CpuTraceInfo trace_info = 1;
+}
+
+message Thread {
+  int32 tid = 1;
+  string name = 2;
+}
+
+// Requests profiler data associated with |session|, in the time range
+// from |start_timestamp| (exclusive) to |end_timestamp| (inclusive), or
+// mathematically written as in interval (start_timestamp, end_timestamp].
+message CpuDataRequest {
+  Session session = 1;
+  int64 start_timestamp = 2;  // Use -2^63 if no data is too old to return.
+  int64 end_timestamp = 3;  // Use 2^63 - 1 if no data is too recent to return.
+}
+
+message CpuDataResponse {
+  repeated CpuUsageData data = 1;
+}
+
+message CpuStartRequest {
+  Session session = 1;
+}
+
+message CpuStartResponse {
+  enum Status {
+    UNSPECIFIED = 0;
+    SUCCESS = 1;
+    FAILURE_APP_NOT_RUNNING = 2;
+    FAILURE_UNKNOWN = 3;
+    FAILURE = 4;
+  }
+  Status status = 1;
+}
+
+message StartupProfilingRequest {
+  int64 device_id = 1;
+  CpuTraceConfiguration configuration = 2;
+}
+
+message StartupProfilingResponse {
+  enum Status {
+    UNSPECIFIED = 0;
+    SUCCESS = 1;
+    FAILURE = 2;
+  }
+  Status status = 1;
+  string error_message = 2;
+  // Buffer size (in KB) acquired by Atrace trace configs.
+  int32 buffer_size_acquired_kb = 3;
+}
+
+message CpuStopRequest {
+  Session session = 1;
+}
+
+message CpuStopResponse {
+  enum Status {
+    UNSPECIFIED = 0;
+    SUCCESS = 1;
+    FAILURE_UNKNOWN = 2;
+  }
+  Status status = 1;
+}
+
+// Request profiling of app (identified by its |session|) to start.
+// INSTRUMENTED is support only when ART is the profiler.
+message CpuProfilingAppStartRequest {
+  Session session = 1;
+  CpuTraceConfiguration configuration = 2;
+}
+
+// Returns the status and absolute path location (on device) where the trace
+// file will be written.
+message CpuProfilingAppStartResponse {
+  TraceStartStatus status = 1;
+  // Buffer size (in KB) acquired by Atrace trace configs.
+  int32 buffer_size_acquired_kb = 2;
+}
+
+// Request profiling of app (identified by its |session|) to stop.
+message CpuProfilingAppStopRequest {
+  Session session = 1;
+  CpuTraceType trace_type = 2;
+  CpuTraceMode trace_mode = 3;
+  // This is needed to stop any ongoing trace, since traces
+  // are mapped via the process's name in the daemon as part
+  // of the new pipeline change.
+  string app_name = 4;
+  // Whether the rpc needs to wait and parse the trace content.
+  bool need_trace_response = 5;
+
+}
+
+message CpuProfilingAppStopResponse {
+  TraceStopStatus status = 1;
+  // Trace ID should be unique within an app.
+  int64 trace_id = 2;
+}
+
+message CpuCoreConfigRequest {
+  int64 device_id = 1;
+}
+
+message CpuCoreConfigResponse {
+  CpuCoreConfigData cpu_core_config = 1;
+}
+
+// Requests the state of all the threads in the given time range.
+message GetThreadsRequest {
+  Session session = 1;
+  int64 start_timestamp = 2;
+  int64 end_timestamp = 3;
+}
+
+message GetThreadsResponse {
+  // Snapshot of the threads that were alive at a given moment.
+  message ThreadSnapshot {
+    message Snapshot {
+      int32 tid = 1;
+      string name = 2;
+      CpuThreadData.State state = 3;
+    }
+    repeated Snapshot threads = 1;
+    int64 timestamp = 2;
+  }
+
+  message ThreadActivity {
+    int64 timestamp = 1;
+    CpuThreadData.State new_state = 2;
+  }
+
+  // TODO: unify with Thread
+  message Thread {
+    int32 tid = 1;
+    string name = 2;
+    repeated ThreadActivity activities = 3;
+  }
+
+  // Threads with activities detected during the request range,
+  // ordered by thread id.
+  repeated Thread threads = 1;
+  // The snapshot of threads that were alive at the beginning of the range.
+  ThreadSnapshot initial_snapshot = 2;
+}
+
+message EmptyCpuReply {
+}

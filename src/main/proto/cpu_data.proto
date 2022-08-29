@@ -1,0 +1,271 @@
+/*
+ * Copyright (C) 2018 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+package profiler.proto;
+option java_package = "com.android.tools.profiler.proto";
+option java_outer_classname = "Cpu";
+
+// CPU usage data of an app process and the entire system at a given point.
+//
+// CPU usage data is most valuable when app data is combined with system data,
+// e.g., showing the CPU usage percentage number. One data consumer (e.g., an
+// Android Studio instance) would request an app's data, and another consumer
+// (e.g., another Android Studio instance) would request another app's. Both of
+// them need system data. Therefore, we put system data together with every
+// piece of app specific data.
+//
+// The absolute values of fields in this message are not very interesting.
+// The difference of two instances is more useful. It can show the system-
+// wide CPU utilization percentage and an app's CPU utilization percentage.
+// The values of the fields may overflow their type, but the usefulness stays
+// the same.
+message CpuUsageData {
+  // Timestamp(ns) when the data sample was collected.
+  //
+  // TODO: in the new pipeline, timestamp is stored in the common Event proto.
+  // Remove this field when old pipeline is deprecated.
+  int64 end_timestamp = 1;
+  // Amount of time that this process has been using CPU, measured in
+  // milliseconds.
+  int64 app_cpu_time_in_millisec = 2;
+  // Amount of time that the entire system (including applications) has been
+  // using CPU, measured in milliseconds.
+  int64 system_cpu_time_in_millisec = 3;
+  // Amount of time since the system start, measured in milliseconds.
+  int64 elapsed_time_in_millisec = 4;
+  // System usage per core.
+  repeated CpuCoreUsageData cores = 5;
+}
+
+message CpuCoreUsageData {
+  // Index of the CPU core.
+  int32 core = 1;
+  // Amount of time that the entire system (including applications) has been
+  // using this CPU core, measured in milliseconds.
+  int64 system_cpu_time_in_millisec = 2;
+  // Amount of time since the system start, measured in milliseconds.
+  int64 elapsed_time_in_millisec = 3;
+  // Current CPU frequency in kHz. Used for energy usage estimation.
+  int32 frequency_in_khz = 4;
+}
+
+// Represents a single event when a thread changes its state.
+message CpuThreadData {
+  enum State {
+    UNSPECIFIED = 0;
+    RUNNING = 1;
+    SLEEPING = 2;
+    WAITING = 3;
+    ZOMBIE = 4;
+    STOPPED = 5;
+    TRACING = 6;
+    PAGING = 7;
+    DEAD = 8;
+    WAKEKILL = 9;
+    WAKING = 10;
+    PARKED = 11;
+  }
+
+  // Thread ID as returned from the Android OS. Unique within a process.
+  int32 tid = 1;
+
+  // Thread name as returned from the Android OS.
+  string name = 2;
+
+  // The current thread state in this activity.
+  State state = 3;
+}
+
+enum CpuTraceType {
+  UNSPECIFIED_TYPE = 0;
+  ART = 1;
+  SIMPLEPERF = 2;
+  ATRACE = 3;
+  PERFETTO = 4;
+}
+
+enum CpuTraceMode {
+  UNSPECIFIED_MODE = 0;
+  SAMPLED = 1;
+  INSTRUMENTED = 2;
+}
+
+enum TraceInitiationType {
+  UNSPECIFIED_INITIATION = 0;
+  INITIATED_BY_UI = 1;  // specifically means non-startup UI operations.
+  INITIATED_BY_API = 2;
+  INITIATED_BY_STARTUP = 3;
+}
+
+message TraceStartStatus {
+  enum Status {
+    UNSPECIFIED = 0;
+    SUCCESS = 1;
+    FAILURE = 2;
+  }
+
+  Status status = 1;
+  string error_message = 2;
+}
+
+message TraceStopStatus {
+  enum Status {
+    UNSPECIFIED = 0;
+    SUCCESS = 1;
+    NO_ONGOING_PROFILING = 2;
+    APP_PROCESS_DIED = 3;
+    APP_PID_CHANGED = 4;
+    PROFILER_PROCESS_DIED = 5;
+    STOP_COMMAND_FAILED = 6;
+    STILL_PROFILING_AFTER_STOP = 7;
+    CANNOT_START_WAITING = 8;
+    WAIT_TIMEOUT = 9;
+    WAIT_FAILED = 10;
+    CANNOT_READ_WAIT_EVENT = 11;
+    CANNOT_COPY_FILE = 12;
+    CANNOT_FORM_FILE = 13;
+    CANNOT_READ_FILE = 14;
+  }
+
+  Status status = 1;
+  string error_message = 2;
+  // The time taken to stop the trace;
+  int64 stopping_time_ns = 3;
+}
+
+// A CpuTraceInfo contains the information regarding a trace
+// and should be returned if its time overlaps with the request time range.
+message CpuTraceInfo {
+  int64 trace_id = 1;
+  int64 from_timestamp = 2;  // inclusive
+  int64 to_timestamp = 3;    // inclusive
+  CpuTraceConfiguration configuration = 4;
+  TraceStartStatus start_status = 5;
+  TraceStopStatus stop_status = 6;
+}
+
+message CpuTraceData {
+  message TraceStarted {
+    CpuTraceInfo trace_info = 1;
+  }
+
+  message TraceEnded {
+    CpuTraceInfo trace_info = 1;
+  }
+
+  oneof union {
+    TraceStarted trace_started = 1;
+    TraceEnded trace_ended = 2;
+  }
+}
+
+message CpuTraceStatusData {
+  oneof union {
+    TraceStartStatus trace_start_status = 1;
+    TraceStopStatus trace_stop_status = 2;
+  }
+}
+
+message StartCpuTrace {
+  // Agent is responsible for providing these additional info for API-
+  // initiated tracing.
+  message ApiStartTracingMetaData {
+    int64 start_timestamp = 1;
+  }
+  CpuTraceConfiguration configuration = 1;
+  // Set only if configuration's initiation_type is |INITIATED_BY_API|.
+  ApiStartTracingMetaData api_start_metadata = 2;
+}
+
+message StopCpuTrace {
+  // Agent is responsible for providing these additional info for API-
+  // initiated tracing.
+  message ApiStopTracingMetaData {
+    int64 stop_timestamp = 1;
+    // A name of trace's content that's unique during the lifetime of the
+    // process. The daemon is responsible for storing the content in the generic
+    // cache that can be referenced via the trace's id.
+    string trace_name = 2;
+  }
+  CpuTraceConfiguration configuration = 1;
+  // Set only if configuration's initiation_type is |INITIATED_BY_API|.
+  ApiStopTracingMetaData api_stop_metadata = 2;
+  // Whether the command needs to wait and parse the trace content.
+  bool need_trace_response = 3;
+}
+
+message CpuTraceConfiguration {
+  message UserOptions {
+    // Name of the configuration. For Studio-side display only.
+    string name = 1;
+
+    CpuTraceMode trace_mode = 2;
+
+    CpuTraceType trace_type = 3;
+
+    // Whether to disable live allocation tracking during tracing.
+    // This is primarily used to reduce app performance overhead from live
+    // allocation tracking. For Studio-side only.
+    bool disable_live_allocation = 4;
+
+    // When using ATrace/Perfetto, the size of the buffer that holds tracing
+    // data.
+    int32 buffer_size_in_mb = 5;
+
+    // When using sampling, the sampling interval in microseconds.
+    int32 sampling_interval_us = 6;
+  }
+
+  UserOptions user_options = 1;
+
+  // The name of the app to be traced. Most if not all trace modes supports the
+  // app_name as the input instead pid. In the case of startup profiling, we
+  // don't know the pid anyway, so we use the app's name for all scenarios
+  // instead.
+  string app_name = 2;
+
+  TraceInitiationType initiation_type = 3;
+
+  // ABI CPU architecture of the simpleperf/perfetto binary to use. This
+  // should match the arch of the device and should be one of the
+  // values defined by SdkConstants.CPU_ARCH_*, e.g. 'arm', 'arm64', 'x86'.
+  string abi_cpu_arch = 4;
+
+  // The device path to output the trace to. Generated by Studio unless for the
+  // case of initiation_type == |INITIATED_BY_API| which does not need to
+  // specify a path. Note that this is a only for temp storage. A completed
+  // trace will be made available via the |GetBytes| rpc using the trace id as
+  // the byte's id.
+  string temp_path = 5;
+
+  // The host path to symbols for this trace. This is passed in by studio
+  // and used by the simpleperf preprocessor to properly symbolize the trace.
+  // The symbolized trace is then saved in the datastore.
+  repeated string symbol_dirs = 6;
+}
+
+// Data for the CpuCoreConfig command.
+message CpuCoreConfigData {
+  repeated CpuCoreConfig core_configs = 1;
+}
+
+// CPU per-core physical configuration data.
+message CpuCoreConfig {
+  int32 core = 1;
+  int32 min_frequency_in_khz = 2;
+  int32 max_frequency_in_khz = 3;
+}
