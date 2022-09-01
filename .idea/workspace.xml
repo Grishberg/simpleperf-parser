@@ -4,20 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="adb377ad-0569-4f4f-95b9-55b0da070341" name="Changes" comment="added trace samples">
-      <change afterPath="$PROJECT_DIR$/README.MD" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Main.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/com/android/SdkConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/android/SdkConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/com/android/testutils/TestUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/android/testutils/TestUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/com/android/tools/profilers/cpu/CpuProfilerTestUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/android/tools/profilers/cpu/CpuProfilerTestUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/com/android/tools/profilers/cpu/simpleperf/SimpleperfTraceParserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/android/tools/profilers/cpu/simpleperf/SimpleperfTraceParserTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/com/google/protobuf/ByteString.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/google/protobuf/ByteString.java" afterDir="false" />
+    <list default="true" id="adb377ad-0569-4f4f-95b9-55b0da070341" name="Changes" comment="fixed tests">
+      <change beforePath="$PROJECT_DIR$/README.MD" beforeDir="false" afterPath="$PROJECT_DIR$/README.MD" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -235,7 +223,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661753448564</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fixed tests">
+      <created>1662016127459</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1662016127459</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -256,7 +251,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added trace samples" />
     <MESSAGE value="trace parser from AS" />
-    <option name="LAST_COMMIT_MESSAGE" value="trace parser from AS" />
+    <MESSAGE value="fixed tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
