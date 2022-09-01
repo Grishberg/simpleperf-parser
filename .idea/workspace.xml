@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="adb377ad-0569-4f4f-95b9-55b0da070341" name="Changes" comment="fixed tests">
-      <change beforePath="$PROJECT_DIR$/README.MD" beforeDir="false" afterPath="$PROJECT_DIR$/README.MD" afterDir="false" />
-    </list>
+    <list default="true" id="adb377ad-0569-4f4f-95b9-55b0da070341" name="Changes" comment="update README.MD" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -230,7 +228,14 @@
       <option name="project" value="LOCAL" />
       <updated>1662016127459</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="update README.MD">
+      <created>1662016273134</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1662016273134</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -252,7 +257,8 @@
     <MESSAGE value="added trace samples" />
     <MESSAGE value="trace parser from AS" />
     <MESSAGE value="fixed tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed tests" />
+    <MESSAGE value="update README.MD" />
+    <option name="LAST_COMMIT_MESSAGE" value="update README.MD" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
