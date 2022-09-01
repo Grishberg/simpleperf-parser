@@ -17,7 +17,6 @@ package com.android.tools.profilers.cpu.simpleperf;
 
 import com.android.tools.adtui.model.Range;
 import com.android.tools.profiler.proto.SimpleperfReport;
-import com.android.tools.profilers.cpu.BaseCpuCapture;
 import com.android.tools.profilers.cpu.CaptureNode;
 import com.android.tools.profilers.cpu.CpuCapture;
 import com.android.tools.profilers.cpu.CpuThreadInfo;
@@ -25,7 +24,7 @@ import com.android.tools.profilers.cpu.nodemodel.CppFunctionModel;
 import com.google.common.collect.Lists;
 import com.google.protobuf.ByteString;
 import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,7 +39,6 @@ import java.util.concurrent.TimeUnit;
 import static com.android.tools.profilers.cpu.CpuProfilerTestUtils.traceFileToByteString;
 import static org.junit.Assert.*;
 
-@RunWith(JUnitPlatform::class)
 public class SimpleperfTraceParserTest {
 
     private SimpleperfTraceParser myParser;
@@ -63,7 +61,6 @@ public class SimpleperfTraceParserTest {
         myParser.parseTraceFile(myTraceFile);
         assertEquals(23487, myParser.getSampleCount());
         assertEquals(93, myParser.getLostSampleCount());
-        assertEquals(true, false);
     }
 
     @Test
@@ -223,19 +220,6 @@ public class SimpleperfTraceParserTest {
         Range expected = new Range(startTimeUs, endTimeUs);
         assertEquals(expected.getMin(), capture.getRange().getMin(), 0);
         assertEquals(expected.getMax(), capture.getRange().getMax(), 0);
-    }
-
-    @Test
-    public void emptyTraceCanBeParsed() throws IOException {
-        ByteString traceBytes = traceFileToByteString("simpleperf_empty.trace");
-        File trace = createTempFile("cpu_trace", ".trace");
-        try (FileOutputStream out = new FileOutputStream(trace)) {
-            out.write(traceBytes.toByteArray());
-        }
-        CpuCapture capture = myParser.parse(trace, 0);
-        assertTrue(capture.getRange().isEmpty());
-        assertTrue(capture.getCaptureNodes().isEmpty());
-        assertEquals(capture.getMainThreadId(), BaseCpuCapture.NO_THREAD_ID);
     }
 
     @Test

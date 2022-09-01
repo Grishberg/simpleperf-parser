@@ -1,3 +1,3 @@
 
-rootProject.name = "protobuf-parser"
+rootProject.name = "simpleperf"
 

@@ -4,31 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="adb377ad-0569-4f4f-95b9-55b0da070341" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/kotlinc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/Main.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/com/github/grishberg/simpleperf/Parser.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/proto/simpleperf.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/kotlin/com/github/grishberg/simpleperf/ParserTest.kt" afterDir="false" />
+    <list default="true" id="adb377ad-0569-4f4f-95b9-55b0da070341" name="Changes" comment="added trace samples">
+      <change afterPath="$PROJECT_DIR$/README.MD" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Main.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/com/android/SdkConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/android/SdkConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/com/android/testutils/TestUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/android/testutils/TestUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/com/android/tools/profilers/cpu/CpuProfilerTestUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/android/tools/profilers/cpu/CpuProfilerTestUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/com/android/tools/profilers/cpu/simpleperf/SimpleperfTraceParserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/android/tools/profilers/cpu/simpleperf/SimpleperfTraceParserTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/com/google/protobuf/ByteString.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/google/protobuf/ByteString.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
   </component>
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
@@ -50,13 +47,31 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin Class" />
         <option value="JUnit4 Test Class" />
+        <option value="Interface" />
+        <option value="Kotlin Interface" />
+        <option value="Kotlin File" />
+        <option value="Kotlin Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -67,35 +82,126 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit4",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4": "",
-    "settings.editor.selected.configurable": "terminal"
-  }
-}]]></component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/test/resources" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
+  </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test/resources" />
+    </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/proto" />
+      <recent name="$PROJECT_DIR$/src/main/trace_processor_daemon/proto" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="com.github.grishberg.simpleperf" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration name="MainKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="MainKt" />
-      <module name="protobuf-parser.main" />
+  <component name="RunManager" selected="JUnit.SimpleperfTraceParserTest">
+    <configuration name="SimpleperfTraceParserTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;com.android.tools.profilers.cpu.simpleperf.SimpleperfTraceParserTest&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="SimpleperfTraceParserTest.samplesAndLostCountShouldMatchSimpleperfReport" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;com.android.tools.profilers.cpu.simpleperf.SimpleperfTraceParserTest.samplesAndLostCountShouldMatchSimpleperfReport&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="SimpleperfTraceParserTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="protobuf-parser.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.android.tools.profilers.cpu.simpleperf.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.android.tools.profilers.cpu.simpleperf" />
+      <option name="MAIN_CLASS_NAME" value="com.android.tools.profilers.cpu.simpleperf.SimpleperfTraceParserTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SimpleperfTraceParserTest.emptyTraceCanBeParsed" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="protobuf-parser.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.android.tools.profilers.cpu.simpleperf.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.android.tools.profilers.cpu.simpleperf" />
+      <option name="MAIN_CLASS_NAME" value="com.android.tools.profilers.cpu.simpleperf.SimpleperfTraceParserTest" />
+      <option name="METHOD_NAME" value="emptyTraceCanBeParsed" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SimpleperfTraceParserTest.samplesAndLostCountShouldMatchSimpleperfReport" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="protobuf-parser.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.android.tools.profilers.cpu.simpleperf.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.android.tools.profilers.cpu.simpleperf" />
+      <option name="MAIN_CLASS_NAME" value="com.android.tools.profilers.cpu.simpleperf.SimpleperfTraceParserTest" />
+      <option name="METHOD_NAME" value="samplesAndLostCountShouldMatchSimpleperfReport" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Kotlin.MainKt" />
+        <item itemvalue="JUnit.SimpleperfTraceParserTest" />
+        <item itemvalue="JUnit.SimpleperfTraceParserTest.emptyTraceCanBeParsed" />
+        <item itemvalue="JUnit.SimpleperfTraceParserTest.samplesAndLostCountShouldMatchSimpleperfReport" />
+        <item itemvalue="Gradle.SimpleperfTraceParserTest" />
+        <item itemvalue="Gradle.SimpleperfTraceParserTest.samplesAndLostCountShouldMatchSimpleperfReport" />
       </list>
     </recent_temporary>
   </component>
@@ -108,6 +214,28 @@
       <option name="presentableId" value="Default" />
       <updated>1660461584014</updated>
     </task>
+    <task id="LOCAL-00001" summary="added trace samples">
+      <created>1660474957348</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1660474957348</updated>
+    </task>
+    <task id="LOCAL-00002" summary="added trace samples">
+      <created>1660474999953</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1660474999953</updated>
+    </task>
+    <task id="LOCAL-00003" summary="trace parser from AS">
+      <created>1661753448564</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1661753448564</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -123,6 +251,23 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="added trace samples" />
+    <MESSAGE value="trace parser from AS" />
+    <option name="LAST_COMMIT_MESSAGE" value="trace parser from AS" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/android/tools/profilers/cpu/simpleperf/SimpleperfTraceParserTest.java</url>
+          <line>64</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

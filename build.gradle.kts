@@ -16,8 +16,8 @@ sourceSets {
         }
     }
 }
-group = "com.github.grishberg"
-version = "1.0-SNAPSHOT"
+group = "com.github.grishberg.android.perf"
+version = "1.0.0"
 
 repositories {
     google()
@@ -30,7 +30,7 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java:3.6.1")
     implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.19")
     implementation("com.github.grishberg:mvtrace-dependencies:1.0.3")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
+    testImplementation("junit:junit:4.12")
     testImplementation(kotlin("test"))
 }
 
@@ -46,10 +46,6 @@ tasks.test {
     testLogging {
         events("passed", "skipped", "failed")
     }
-}
-
-application {
-    mainClass.set("MainKt")
 }
 
 java.sourceSets["main"].java {
