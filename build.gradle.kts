@@ -18,7 +18,7 @@ sourceSets {
     }
 }
 group = "com.github.grishberg.android.perf"
-version = "1.0.4"
+version = "1.0.5"
 
 repositories {
     google()
@@ -61,14 +61,14 @@ java.sourceSets["main"].java {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-	withSourcesJar()
-	withJavadocJar()
+	  withSourcesJar()
 }
 
 publishing {
     publications {
-        maven(MavenPublication) {
-		        from components.java
+      create<MavenPublication>("maven") {
+            artifactId = "library"
+            from(components["java"])
         }
     }
 }
