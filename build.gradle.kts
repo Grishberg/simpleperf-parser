@@ -61,6 +61,16 @@ java.sourceSets["main"].java {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+	withSourcesJar()
+	withJavadocJar()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+		        from components.java
+        }
+    }
 }
 
 configurations.forEach {
