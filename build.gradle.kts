@@ -7,6 +7,7 @@ plugins {
     application
     id("com.google.protobuf") version "0.8.19"
     id("java")
+    `maven-publish`
 }
 
 sourceSets {
