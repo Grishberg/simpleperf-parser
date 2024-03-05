@@ -27,8 +27,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.guava:guava:27.0.1-jre")
-    implementation("com.google.protobuf:protobuf-java:3.6.1")
+    implementation("com.google.guava:guava:33.0.0-jre")
+    implementation("com.google.protobuf:protobuf-java:3.25.3")
     implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.19")
     implementation("com.github.grishberg:mvtrace-dependencies:1.0.3")
     testImplementation("junit:junit:4.12")
@@ -38,7 +38,7 @@ dependencies {
 protobuf {
     protoc {
         // The artifact spec for the Protobuf Compiler
-        artifact = "com.google.protobuf:protoc:3.6.1"
+        artifact = "com.google.protobuf:protoc:3.25.3"
     }
 }
 
